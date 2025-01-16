@@ -1,3 +1,8 @@
+// 容器进程创建前的准备工作，包括
+// 1. 初始化命令cmd
+// 2. 创建Namespace进行视图隔离
+// 3. 准备Overlayfs相关文件挂载
+
 package container
 
 import (
@@ -54,7 +59,9 @@ func NewParentProcessPipe(tty bool) (*exec.Cmd, *os.File) {
 	}
 
 	cmd.ExtraFiles = []*os.File{rPipe}
-	cmd.Dir = "/root/busybox"
+	rootPath := "/root/myoverlayfs"
+	NewWorkSpace(rootPath)
+	cmd.Dir = "/root/myoverlayfs/merged"
 
 	return cmd, wPipe
 }

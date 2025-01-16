@@ -1,3 +1,5 @@
+// 容器初始化时需要进行的操作，此时容器进程已经创建
+
 package container
 
 import (
@@ -75,7 +77,7 @@ func setUpMount() {
 	syscall.Mount("tmpfs", "/dev", "tmpfs", syscall.MS_NOSUID|syscall.MS_STRICTATIME, "mode=755")
 }
 
-// 为当前容器挂在新的rootfs
+// 为当前容器挂载新的rootfs
 func pivotRoot(root string) error {
 	if err := syscall.Mount(root, root, "bind", syscall.MS_BIND|syscall.MS_REC, ""); err != nil {
 		return errors.Wrap(err, "mount rootfs to itself")

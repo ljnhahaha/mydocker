@@ -1,0 +1,69 @@
+{"level":"info","msg":"Init container ...","time":"2025-01-07T16:37:41+08:00"}
+{"level":"info","msg":"Command: hello","time":"2025-01-07T16:37:41+08:00"}
+time="2025-01-07T16:38:12+08:00" level=info msg="Init container ..."
+time="2025-01-07T16:38:12+08:00" level=info msg="Command: hello"
+[36mINFO[0m[70745-01-07 16:40:45] Init container ...                           
+[36mINFO[0m[70745-01-07 16:40:45] Command: hello                               
+[36mINFO[0m[2025-01-07 16:45:07] Init container ...                           
+[36mINFO[0m[2025-01-07 16:45:07] Command: hello                               
+[36mINFO[0m[2025-01-07 16:46:49] run command cmd: myimage, tty: true          
+[36mINFO[0m[2025-01-07 16:47:04] run command cmd: run, tty: true              
+[36mINFO[0m[2025-01-07 17:05:00] run command cmd: run, tty: true              
+[36mINFO[0m[2025-01-07 20:22:19] Init container ...                           
+[36mINFO[0m[2025-01-07 20:22:19] Container command: /bin/sh                   
+[31mERRO[0m[2025-01-07 20:28:06] fork/exec /proc/self/exe: operation not permitted 
+[36mINFO[0m[2025-01-07 20:28:50] Init container ...                           
+[36mINFO[0m[2025-01-07 20:28:50] Container command: /bin/sh                   
+[36mINFO[0m[2025-01-07 20:32:56] Init container ...                           
+[36mINFO[0m[2025-01-07 20:32:56] Container command: /bin/sh                   
+[36mINFO[0m[2025-01-07 20:42:08] Init container ...                           
+[36mINFO[0m[2025-01-07 20:42:08] Container command: /bin/sh                   
+[36mINFO[0m[2025-01-08 15:18:51] Init container ...                           
+[36mINFO[0m[2025-01-08 15:18:51] Container command: ls                        
+[31mERRO[0m[2025-01-08 15:18:51] no such file or directory                    
+[36mINFO[0m[2025-01-08 15:19:30] Init container ...                           
+[36mINFO[0m[2025-01-08 15:19:30] Container command: /bin/ls                   
+time="2025-01-08 15:30:50" level=info msg="Init container ..."
+time="2025-01-08 15:30:50" level=info msg="Container command: /bin/ls"
+time="2025-01-08 15:33:54" level=info msg="Init container ..."
+time="2025-01-08 15:33:54" level=info msg="Container command: /bin/ls"
+[36mINFO[0m[2025-01-08 15:38:42]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:39 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-08 15:38:42]/mnt/d/WSL/workshop/Go/mydocker/container/init.go:11 mydocker/container.RunContainerInitProcess() Container command: ls                        
+[31mERRO[0m[2025-01-08 15:38:42]/mnt/d/WSL/workshop/Go/mydocker/container/init.go:26 mydocker/container.RunContainerInitProcess() no such file or directory                    
+[36mINFO[0m[2025-01-08 17:01:58]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:41 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-08 17:01:58]/mnt/d/WSL/workshop/Go/mydocker/run.go:36 main.sendInitCmds() Container init command: ls                   
+[36mINFO[0m[2025-01-13 16:02:22]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[31mERRO[0m[2025-01-13 16:02:22]/mnt/d/WSL/workshop/Go/mydocker/cgroups/manager.go:26 mydocker/cgroups.(*CgroupManager).Set() Set system: memory, err: mkdir /sys/fs/cgroup/memory: file exists 
+[31mERRO[0m[2025-01-13 16:02:22]/mnt/d/WSL/workshop/Go/mydocker/cgroups/manager.go:40 mydocker/cgroups.(*CgroupManager).Apply() Add proc: 28172 to system: memory, err: path mydocker-cgroup does not exist 
+[36mINFO[0m[2025-01-13 16:02:22]/mnt/d/WSL/workshop/Go/mydocker/run.go:45 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:08:44]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[31mERRO[0m[2025-01-13 16:08:44]/mnt/d/WSL/workshop/Go/mydocker/cgroups/manager.go:40 mydocker/cgroups.(*CgroupManager).Apply() Add proc: 29056 to system: memory, err: path mydocker-cgroup does not exist 
+[36mINFO[0m[2025-01-13 16:08:44]/mnt/d/WSL/workshop/Go/mydocker/run.go:45 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:11:57]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 16:11:57]/mnt/d/WSL/workshop/Go/mydocker/run.go:45 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:13:54]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 16:13:54]/mnt/d/WSL/workshop/Go/mydocker/run.go:45 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:25:37]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 16:25:37]/mnt/d/WSL/workshop/Go/mydocker/run.go:45 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:30:45]/mnt/d/WSL/workshop/Go/mydocker/run.go:45 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:30:45]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 16:35:03]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 16:35:03]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 32227                            
+[36mINFO[0m[2025-01-13 16:35:03]/mnt/d/WSL/workshop/Go/mydocker/run.go:46 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 16:58:37]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 16:58:37]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 2126                             
+[31mERRO[0m[2025-01-13 16:58:37]/mnt/d/WSL/workshop/Go/mydocker/cgroups/manager.go:26 mydocker/cgroups.(*CgroupManager).Set() Set system: cpu, err: set cpu period fail: write /sys/fs/cgroup/cpu/mydocker-cgroup/cpu.cfs_period_us: invalid argument 
+[36mINFO[0m[2025-01-13 16:58:37]/mnt/d/WSL/workshop/Go/mydocker/run.go:46 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-13 17:02:11]/mnt/d/WSL/workshop/Go/mydocker/main_comamnd.go:61 main.init.func2() Init container ...                           
+[36mINFO[0m[2025-01-13 17:02:11]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 2832                             
+[36mINFO[0m[2025-01-13 17:02:11]/mnt/d/WSL/workshop/Go/mydocker/run.go:46 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-15 16:55:48]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 13221                            
+[36mINFO[0m[2025-01-15 16:55:48]/mnt/d/WSL/workshop/Go/mydocker/run.go:46 main.sendInitCmds() Container init command: /bin/ls              
+[36mINFO[0m[2025-01-16 15:31:51]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 2431                             
+[36mINFO[0m[2025-01-16 15:31:51]/mnt/d/WSL/workshop/Go/mydocker/run.go:46 main.sendInitCmds() Container init command: /bin/bash            
+[36mINFO[0m[2025-01-16 15:31:57]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 2447                             
+[36mINFO[0m[2025-01-16 15:31:57]/mnt/d/WSL/workshop/Go/mydocker/run.go:46 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-16 18:55:20]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 5117                             
+[36mINFO[0m[2025-01-16 18:55:20]/mnt/d/WSL/workshop/Go/mydocker/run.go:47 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-16 19:02:45]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 6043                             
+[36mINFO[0m[2025-01-16 19:02:45]/mnt/d/WSL/workshop/Go/mydocker/run.go:47 main.sendInitCmds() Container init command: /bin/sh              

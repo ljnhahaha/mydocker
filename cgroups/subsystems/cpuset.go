@@ -5,6 +5,8 @@ import (
 	"path"
 	"strconv"
 
+	"mydocker/utils"
+
 	"github.com/pkg/errors"
 )
 
@@ -42,8 +44,8 @@ func (css *CpusetSubsystem) Apply(cgroup string, pid int, rcfg *ResourceConfig) 
 		return err
 	}
 
-	if err = isFileExist(cgroupPath); err != nil {
-		return err
+	if exist, err := utils.PathExist(cgroupPath); !exist {
+		return errors.Wrap(err, "cpuset cgroup does not exist")
 	}
 
 	if err = os.WriteFile(path.Join(cgroupPath, "tasks"), []byte(strconv.Itoa(pid)), 0644); err != nil {

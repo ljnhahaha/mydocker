@@ -66,12 +66,3 @@ func findSubsystemMountPath(subsystem string) (string, error) {
 
 	return "", fmt.Errorf("mount dir of %s not found", subsystem)
 }
-
-func isFileExist(path string) error {
-	_, err := os.Stat(path)
-	if err != nil && os.IsNotExist(err) {
-		return fmt.Errorf("path %s does not exist", path)
-	}
-
-	return nil
-}

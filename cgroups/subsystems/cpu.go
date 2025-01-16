@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
+
+	"mydocker/utils"
 )
 
 const PeriodDefault = 100000
@@ -57,8 +59,8 @@ func (cs *CpuSubsystem) Apply(cgroup string, pid int, rcfg *ResourceConfig) erro
 		return err
 	}
 
-	if err = isFileExist(cgroupPath); err != nil {
-		return err
+	if exist, err := utils.PathExist(cgroupPath); !exist {
+		return errors.Wrap(err, "cpu cgroup does not exist")
 	}
 
 	if err = os.WriteFile(path.Join(cgroupPath, "tasks"), []byte(strconv.Itoa(pid)), 0644); err != nil {

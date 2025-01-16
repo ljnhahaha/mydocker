@@ -39,6 +39,7 @@ func RunCmds(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
 	// 父进程没有向Pipe输入数据时，子进程会阻塞
 	sendInitCmds(cmdArray, wPipe)
 	_ = parent.Wait()
+	container.DelWorkSpace("/root/myoverlayfs")
 }
 
 func sendInitCmds(cmdArray []string, writePipe *os.File) {
