@@ -67,3 +67,5 @@ time="2025-01-08 15:33:54" level=info msg="Container command: /bin/ls"
 [36mINFO[0m[2025-01-16 18:55:20]/mnt/d/WSL/workshop/Go/mydocker/run.go:47 main.sendInitCmds() Container init command: /bin/sh              
 [36mINFO[0m[2025-01-16 19:02:45]/mnt/d/WSL/workshop/Go/mydocker/run.go:33 main.RunCmds() child proc: 6043                             
 [36mINFO[0m[2025-01-16 19:02:45]/mnt/d/WSL/workshop/Go/mydocker/run.go:47 main.sendInitCmds() Container init command: /bin/sh              
+[36mINFO[0m[2025-01-22 15:09:22]/home/lujianan/workshop/mydocker/run.go:33 main.RunCmds() child proc: 3405                             
+[36mINFO[0m[2025-01-22 15:09:22]/home/lujianan/workshop/mydocker/run.go:47 main.sendInitCmds() Container init command: /bin/ls              
