@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -67,6 +68,20 @@ var initCommand = cli.Command{
 		// cmd := c.Args().Get(0)
 
 		_ = container.RunContainerInitProcess()
+
+		return nil
+	},
+}
+
+var commitCommand = cli.Command{
+	Name:  "commit",
+	Usage: "commit container to image",
+	Action: func(c *cli.Context) error {
+		if len(c.Args().Slice()) < 1 {
+			return fmt.Errorf("commit missing image name")
+		}
+		imageName := c.Args().First()
+		container.CommitContainer(imageName)
 
 		return nil
 	},

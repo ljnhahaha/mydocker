@@ -23,6 +23,7 @@ func main() {
 	app.Commands = []*cli.Command{
 		&runCommand,
 		&initCommand,
+		&commitCommand,
 	}
 
 	app.Before = func(c *cli.Context) error {
