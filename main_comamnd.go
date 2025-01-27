@@ -31,6 +31,10 @@ var runCommand = cli.Command{
 			Name:  "cpuset",
 			Usage: "limit cpuset, e.g., -cpuset 0,1",
 		},
+		&cli.StringFlag{
+			Name:  "v",
+			Usage: "volume, e.g., -v /ect/conf:/etc/conf",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		// c.Args() 不包括flag相关参数
@@ -46,8 +50,9 @@ var runCommand = cli.Command{
 			CpuCfsQuota: c.Int("cpu"),
 		}
 
-		// Run(tty, cmd)
-		RunCmds(tty, c.Args().Slice(), resCfg)
+		volume := c.String("v")
+
+		RunCmds(tty, c.Args().Slice(), resCfg, volume)
 
 		return nil
 	},

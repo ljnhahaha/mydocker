@@ -10,10 +10,20 @@ import (
 )
 
 // 创建挂载OverlayFS所需的文件并挂载OverlayFS
-func NewWorkSpace(rootPath string) {
+// 如果指定了volume还需要挂载volume
+func NewWorkSpace(rootPath, volume string) {
 	createLower(rootPath)
 	createDirs(rootPath)
 	mountOverlayFS(rootPath)
+
+	if volume != "" {
+		mntPath := filepath.Join(rootPath, "merged")
+		hostPath, containerPath, err := volumeParse(volume)
+		if err != nil {
+			logrus.Errorf("parse volume path fail, err: %v", err)
+		}
+		mountVolume(mntPath, hostPath, containerPath)
+	}
 }
 
 // 将 busybox 挂载为 overlayfs 的 lower filesystem
@@ -71,8 +81,18 @@ func mountOverlayFS(rootPath string) {
 
 }
 
-// umount OverlayFS 并且删除 upper, work, merged 文件夹
-func DelWorkSpace(rootPath string) {
+// 先umount volume，再umount OverlayFS 并且删除 upper, work, merged 文件夹
+// 否则会导致 volume 中的文件也被删除
+func DelWorkSpace(rootPath, volume string) {
+	if volume != "" {
+		mntPath := filepath.Join(rootPath, "merged")
+		_, containerPath, err := volumeParse(volume)
+		if err != nil {
+			logrus.Errorf("parse volume path fail, err: %v", err)
+			return
+		}
+		umountVolume(mntPath, containerPath)
+	}
 	umountOverlayFS(rootPath)
 	delDirs(rootPath)
 }

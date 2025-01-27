@@ -11,19 +11,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Run(tty bool, cmd string) {
-	parent := container.NewParentProcess(tty, cmd)
+// func Run(tty bool, cmd string) {
+// 	parent := container.NewParentProcess(tty, cmd)
 
-	if err := parent.Start(); err != nil {
-		logrus.Error(err.Error())
-	}
+// 	if err := parent.Start(); err != nil {
+// 		logrus.Error(err.Error())
+// 	}
 
-	_ = parent.Wait()
-	os.Exit(-1)
-}
+// 	_ = parent.Wait()
+// 	os.Exit(-1)
+// }
 
-func RunCmds(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
-	parent, wPipe := container.NewParentProcessPipe(tty)
+func RunCmds(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string) {
+	parent, wPipe := container.NewParentProcessPipe(tty, volume)
 
 	if err := parent.Start(); err != nil {
 		logrus.Error(err.Error())
@@ -39,7 +39,8 @@ func RunCmds(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
 	// 父进程没有向Pipe输入数据时，子进程会阻塞
 	sendInitCmds(cmdArray, wPipe)
 	_ = parent.Wait()
-	container.DelWorkSpace("/root/myoverlayfs")
+
+	container.DelWorkSpace("/root/myoverlayfs", volume)
 }
 
 func sendInitCmds(cmdArray []string, writePipe *os.File) {

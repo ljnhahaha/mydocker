@@ -35,8 +35,8 @@ func NewParentProcess(tty bool, command string) *exec.Cmd {
 	return cmd
 }
 
-// 通过Pipe，父进程向子进程传递参数
-func NewParentProcessPipe(tty bool) (*exec.Cmd, *os.File) {
+// 创建子进程启动命令，通过Pipe，父进程向子进程传递参数
+func NewParentProcessPipe(tty bool, volume string) (*exec.Cmd, *os.File) {
 	rPipe, wPipe, err := os.Pipe()
 
 	if err != nil {
@@ -58,9 +58,13 @@ func NewParentProcessPipe(tty bool) (*exec.Cmd, *os.File) {
 		cmd.Stderr = os.Stderr
 	}
 
+	// 通过ExtraFile将rPipe传递给子进程
 	cmd.ExtraFiles = []*os.File{rPipe}
+
+	// File Systems
 	rootPath := "/root/myoverlayfs"
-	NewWorkSpace(rootPath)
+	NewWorkSpace(rootPath, volume)
+	// Specify work dir
 	cmd.Dir = "/root/myoverlayfs/merged"
 
 	return cmd, wPipe
