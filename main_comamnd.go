@@ -36,6 +36,10 @@ var runCommand = cli.Command{
 			Name:  "v",
 			Usage: "volume, e.g., -v /ect/conf:/etc/conf",
 		},
+		&cli.BoolFlag{
+			Name:  "d",
+			Usage: "detach container",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		// c.Args() 不包括flag相关参数
@@ -43,8 +47,13 @@ var runCommand = cli.Command{
 			return errors.New("missing container command")
 		}
 
-		// cmd := c.Args().Get(0)
 		tty := c.Bool("it")
+		detach := c.Bool("d")
+		// 实际运行中只依靠-it来判断是否后台运行
+		if tty && detach {
+			return fmt.Errorf("it and d parameter can not be both provided")
+		}
+
 		resCfg := &subsystems.ResourceConfig{
 			MemoryLimit: c.String("mem"),
 			CpuSet:      c.String("cpuset"),
