@@ -22,11 +22,18 @@ import (
 // 	os.Exit(-1)
 // }
 
-func RunCmds(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string) {
-	parent, wPipe := container.NewParentProcessPipe(tty, volume)
+func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string, containerName string) {
+	containerID := container.GenerateContainerID()
 
+	parent, wPipe := container.NewParentProcessPipe(tty, volume)
 	if err := parent.Start(); err != nil {
 		logrus.Error(err.Error())
+	}
+
+	err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, containerName, containerID, volume)
+	if err != nil {
+		logrus.Errorf("record container info failed, err: %v", err)
+		return
 	}
 
 	// cgroup控制资源
@@ -44,6 +51,10 @@ func RunCmds(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume
 	if tty {
 		_ = parent.Wait()
 		container.DelWorkSpace("/root/myoverlayfs", volume)
+		err := container.DelContainerInfo(containerID)
+		if err != nil {
+			logrus.Error(err)
+		}
 	}
 
 }

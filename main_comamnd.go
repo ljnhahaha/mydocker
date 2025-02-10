@@ -16,6 +16,10 @@ var runCommand = cli.Command{
 	Usage: `Create a container 
 	        mydocker run -it [command]`,
 	Flags: []cli.Flag{
+		&cli.StringFlag{
+			Name:  "name",
+			Usage: "specify container name",
+		},
 		&cli.BoolFlag{
 			Name:  "it",
 			Usage: "enable tty",
@@ -61,8 +65,9 @@ var runCommand = cli.Command{
 		}
 
 		volume := c.String("v")
+		containerName := c.String("name")
 
-		RunCmds(tty, c.Args().Slice(), resCfg, volume)
+		Run(tty, c.Args().Slice(), resCfg, volume, containerName)
 
 		return nil
 	},
@@ -92,6 +97,15 @@ var commitCommand = cli.Command{
 		imageName := c.Args().First()
 		container.CommitContainer(imageName)
 
+		return nil
+	},
+}
+
+var listCommand = cli.Command{
+	Name:  "ps",
+	Usage: "list all containers",
+	Action: func(c *cli.Context) error {
+		container.ListContainers()
 		return nil
 	},
 }
