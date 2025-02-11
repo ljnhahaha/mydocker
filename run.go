@@ -11,21 +11,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// func Run(tty bool, cmd string) {
-// 	parent := container.NewParentProcess(tty, cmd)
-
-// 	if err := parent.Start(); err != nil {
-// 		logrus.Error(err.Error())
-// 	}
-
-// 	_ = parent.Wait()
-// 	os.Exit(-1)
-// }
-
 func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string, containerName string) {
 	containerID := container.GenerateContainerID()
 
-	parent, wPipe := container.NewParentProcessPipe(tty, volume)
+	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID)
 	if err := parent.Start(); err != nil {
 		logrus.Error(err.Error())
 	}

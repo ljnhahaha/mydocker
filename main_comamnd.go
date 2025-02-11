@@ -109,3 +109,16 @@ var listCommand = cli.Command{
 		return nil
 	},
 }
+
+var logCommand = cli.Command{
+	Name:  "logs",
+	Usage: "output logs of a container",
+	Action: func(c *cli.Context) error {
+		if len(c.Args().Slice()) < 1 {
+			return errors.New("logs command lacks container ID")
+		}
+		containerID := c.Args().Get(0)
+		container.OutputContainerLog(containerID)
+		return nil
+	},
+}

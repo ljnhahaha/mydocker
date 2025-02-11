@@ -8,7 +8,10 @@ package container
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 	"syscall"
+
+	"mydocker/utils"
 
 	"github.com/sirupsen/logrus"
 )
@@ -34,29 +37,29 @@ type Info struct {
 }
 
 // Instantiate a child process initialization command
-func NewParentProcess(tty bool, command string) *exec.Cmd {
-	args := []string{"init", command}
+// func NewParentProcess(tty bool, command string) *exec.Cmd {
+// 	args := []string{"init", command}
 
-	// /proc/self/exe 表示当前正在运行的可执行文件的路径（符号链接到当前进程的可执行文件)
-	cmd := exec.Command("/proc/self/exe", args...)
+// 	// /proc/self/exe 表示当前正在运行的可执行文件的路径（符号链接到当前进程的可执行文件)
+// 	cmd := exec.Command("/proc/self/exe", args...)
 
-	// 利用 Namespace 进行资源隔离
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWNET | syscall.CLONE_NEWNS | syscall.CLONE_NEWPID |
-			syscall.CLONE_NEWIPC,
-	}
+// 	// 利用 Namespace 进行资源隔离
+// 	cmd.SysProcAttr = &syscall.SysProcAttr{
+// 		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWNET | syscall.CLONE_NEWNS | syscall.CLONE_NEWPID |
+// 			syscall.CLONE_NEWIPC,
+// 	}
 
-	if tty {
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-	}
+// 	if tty {
+// 		cmd.Stdin = os.Stdin
+// 		cmd.Stdout = os.Stdout
+// 		cmd.Stderr = os.Stderr
+// 	}
 
-	return cmd
-}
+// 	return cmd
+// }
 
 // 创建子进程启动命令，通过Pipe，父进程向子进程传递参数
-func NewParentProcessPipe(tty bool, volume string) (*exec.Cmd, *os.File) {
+func NewParentProcessPipe(tty bool, volume, containerID string) (*exec.Cmd, *os.File) {
 	rPipe, wPipe, err := os.Pipe()
 
 	if err != nil {
@@ -76,6 +79,26 @@ func NewParentProcessPipe(tty bool, volume string) (*exec.Cmd, *os.File) {
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+	} else {
+		// 将执行输出记录到指定的日志文件中
+		dirPath := filepath.Join(InfoLoc, containerID)
+		exists, _ := utils.PathExist(dirPath)
+		if !exists {
+			if err := os.MkdirAll(dirPath, 0622); err != nil {
+				logrus.Errorf("mkdir %s failed", dirPath)
+				return nil, nil
+			}
+		}
+
+		stdLogFilePath := filepath.Join(dirPath, GetLogFile(containerID))
+		stdLogFile, err := os.Create(stdLogFilePath)
+		if err != nil {
+			logrus.Errorf("create log file %s failed", stdLogFilePath)
+			return nil, nil
+		}
+
+		cmd.Stdout = stdLogFile
+		cmd.Stderr = stdLogFile
 	}
 
 	// 通过ExtraFile将rPipe传递给子进程

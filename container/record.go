@@ -3,7 +3,9 @@ package container
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
+	"mydocker/utils"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -48,8 +50,11 @@ func RecordContainerInfo(containerPID int, commandArray []string, containerName,
 
 	// 容器信息路径: InfoLoc/{containerID}/
 	dirPath := filepath.Join(InfoLoc, containerID)
-	if err = os.MkdirAll(dirPath, 0622); err != nil {
-		return errors.WithMessagef(err, "mkdir %s failed", dirPath)
+	exists, _ := utils.PathExist(dirPath)
+	if !exists {
+		if err = os.MkdirAll(dirPath, 0622); err != nil {
+			return errors.WithMessagef(err, "mkdir %s failed", dirPath)
+		}
 	}
 
 	fileName := filepath.Join(dirPath, ConfigName)
@@ -76,4 +81,9 @@ func DelContainerInfo(containerID string) error {
 		return errors.WithMessagef(err, "del container info at path: %s failed", dirPath)
 	}
 	return nil
+}
+
+func GetLogFile(containerID string) string {
+	logFile := fmt.Sprintf(LogFile, containerID)
+	return logFile
 }
