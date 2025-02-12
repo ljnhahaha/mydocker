@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -119,6 +120,26 @@ var logCommand = cli.Command{
 		}
 		containerID := c.Args().Get(0)
 		container.OutputContainerLog(containerID)
+		return nil
+	},
+}
+
+var execCommand = cli.Command{
+	Name:  "exec",
+	Usage: "enter a container and exec a command",
+	Action: func(c *cli.Context) error {
+		if os.Getenv(EnvExecPid) != "" {
+			log.Infof("pid callback pid %v", os.Getgid())
+			return nil
+		}
+
+		if len(c.Args().Slice()) < 2 {
+			return errors.New("exec command missing container id or command")
+		}
+		containerID := c.Args().Get(0)
+		var cmdArr []string
+		cmdArr = append(cmdArr, c.Args().Tail()...)
+		ExecContainer(containerID, cmdArr)
 		return nil
 	},
 }
