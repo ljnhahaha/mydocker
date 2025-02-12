@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	_ "mydocker/nsenter"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
