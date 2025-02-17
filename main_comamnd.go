@@ -156,3 +156,23 @@ var stopCommand = cli.Command{
 		return nil
 	},
 }
+
+var rmCommand = cli.Command{
+	Name:  "rm",
+	Usage: "remove container with container ID, e.g., mydocker rm {containerID}",
+	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:  "f",
+			Usage: "force delete running container",
+		},
+	},
+	Action: func(c *cli.Context) error {
+		if len(c.Args().Slice()) < 1 {
+			return errors.New("rm command missing container id")
+		}
+		containerID := c.Args().Get(0)
+		force := c.Bool("f")
+		removeContainer(containerID, force)
+		return nil
+	},
+}

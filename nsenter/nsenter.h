@@ -8,7 +8,7 @@
 #include <fcntl.h>
 
 // 指定函数属性 constructor
-// 这里的代码会在Go运行时启动前执行，它会在单线程的C上下文中运行
+// 这里的代码会在Go代码启动前执行，它会在单线程的C上下文中运行
 // 通过环境变量的方式给 cgo 中的constructor函数传值
 __attribute__((constructor)) void enter_namespace(void) {
 	char *mydocker_pid;

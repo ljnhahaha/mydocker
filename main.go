@@ -28,6 +28,7 @@ func main() {
 		&logCommand,
 		&execCommand,
 		&stopCommand,
+		&rmCommand,
 	}
 
 	app.Before = func(c *cli.Context) error {
