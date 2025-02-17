@@ -59,7 +59,7 @@ type Info struct {
 // }
 
 // 创建子进程启动命令，通过Pipe，父进程向子进程传递参数
-func NewParentProcessPipe(tty bool, volume, containerID, imageName string) (*exec.Cmd, *os.File) {
+func NewParentProcessPipe(tty bool, volume, containerID, imageName string, envSlice []string) (*exec.Cmd, *os.File) {
 	rPipe, wPipe, err := os.Pipe()
 
 	if err != nil {
@@ -108,6 +108,8 @@ func NewParentProcessPipe(tty bool, volume, containerID, imageName string) (*exe
 	NewWorkSpace(containerID, imageName, volume)
 	// Specify work dir
 	cmd.Dir = utils.GetMerged(containerID)
+
+	cmd.Env = append(os.Environ(), envSlice...)
 
 	return cmd, wPipe
 }

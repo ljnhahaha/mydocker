@@ -11,10 +11,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume, containerName, imageName string) {
+func Run(tty bool, cmdArray, envSlice []string, res *subsystems.ResourceConfig, volume, containerName, imageName string) {
 	containerID := container.GenerateContainerID()
 
-	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID, imageName)
+	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID, imageName, envSlice)
 	if err := parent.Start(); err != nil {
 		logrus.Error(err.Error())
 		return

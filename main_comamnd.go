@@ -45,6 +45,10 @@ var runCommand = cli.Command{
 			Name:  "d",
 			Usage: "detach container",
 		},
+		&cli.StringSliceFlag{
+			Name:  "e",
+			Usage: "set environment, e.g., -e name=mydocker -e foo=bar",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		// c.Args() 不包括flag相关参数
@@ -67,8 +71,9 @@ var runCommand = cli.Command{
 
 		volume := c.String("v")
 		containerName := c.String("name")
+		envSlice := c.StringSlice("e")
 		imageName := c.Args().First()
-		Run(tty, c.Args().Tail(), resCfg, volume, containerName, imageName)
+		Run(tty, c.Args().Tail(), envSlice, resCfg, volume, containerName, imageName)
 
 		return nil
 	},
