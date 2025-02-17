@@ -24,6 +24,7 @@ func removeContainer(containerID string, force bool) {
 			log.Errorf("remove dir %s failed, %v", dirPath, err)
 			return
 		}
+		container.DelWorkSpace(containerID, containerInfo.Volume)
 	case container.RUNNING:
 		if !force {
 			log.Errorf("container {%s} is running, please stop it at first or use [-f]", containerID)
@@ -39,11 +40,12 @@ func removeContainer(containerID string, force bool) {
 			log.Errorf("kill process %d failed, %v", pidInt, err)
 			return
 		}
-		dirPath := filepath.Join(container.InfoLoc, containerID)
-		if err = os.RemoveAll(dirPath); err != nil {
-			log.Errorf("remove dir %s failed, %v", dirPath, err)
+		infoDirPath := filepath.Join(container.InfoLoc, containerID)
+		if err = os.RemoveAll(infoDirPath); err != nil {
+			log.Errorf("remove dir %s failed, %v", infoDirPath, err)
 			return
 		}
+		container.DelWorkSpace(containerID, containerInfo.Volume)
 	default:
 		log.Errorf("couldn't remove container, invalid status: %s", containerInfo.Status)
 		return

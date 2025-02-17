@@ -67,8 +67,8 @@ var runCommand = cli.Command{
 
 		volume := c.String("v")
 		containerName := c.String("name")
-
-		Run(tty, c.Args().Slice(), resCfg, volume, containerName)
+		imageName := c.Args().First()
+		Run(tty, c.Args().Tail(), resCfg, volume, containerName, imageName)
 
 		return nil
 	},
@@ -92,11 +92,12 @@ var commitCommand = cli.Command{
 	Name:  "commit",
 	Usage: "commit container to image",
 	Action: func(c *cli.Context) error {
-		if len(c.Args().Slice()) < 1 {
-			return fmt.Errorf("commit missing image name")
+		if len(c.Args().Slice()) < 2 {
+			return fmt.Errorf("commit missing container id or image name")
 		}
-		imageName := c.Args().First()
-		container.CommitContainer(imageName)
+		containerID := c.Args().Get(0)
+		imageName := c.Args().Get(1)
+		container.CommitContainer(containerID, imageName)
 
 		return nil
 	},
@@ -157,7 +158,7 @@ var stopCommand = cli.Command{
 	},
 }
 
-var rmCommand = cli.Command{
+var removeCommand = cli.Command{
 	Name:  "rm",
 	Usage: "remove container with container ID, e.g., mydocker rm {containerID}",
 	Flags: []cli.Flag{

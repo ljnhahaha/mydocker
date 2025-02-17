@@ -59,7 +59,7 @@ type Info struct {
 // }
 
 // 创建子进程启动命令，通过Pipe，父进程向子进程传递参数
-func NewParentProcessPipe(tty bool, volume, containerID string) (*exec.Cmd, *os.File) {
+func NewParentProcessPipe(tty bool, volume, containerID, imageName string) (*exec.Cmd, *os.File) {
 	rPipe, wPipe, err := os.Pipe()
 
 	if err != nil {
@@ -105,10 +105,9 @@ func NewParentProcessPipe(tty bool, volume, containerID string) (*exec.Cmd, *os.
 	cmd.ExtraFiles = []*os.File{rPipe}
 
 	// File Systems
-	rootPath := "/root/myoverlayfs"
-	NewWorkSpace(rootPath, volume)
+	NewWorkSpace(containerID, imageName, volume)
 	// Specify work dir
-	cmd.Dir = "/root/myoverlayfs/merged"
+	cmd.Dir = utils.GetMerged(containerID)
 
 	return cmd, wPipe
 }

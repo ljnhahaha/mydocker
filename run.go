@@ -11,12 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string, containerName string) {
+func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume, containerName, imageName string) {
 	containerID := container.GenerateContainerID()
 
-	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID)
+	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID, imageName)
 	if err := parent.Start(); err != nil {
 		logrus.Error(err.Error())
+		return
 	}
 
 	err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, containerName, containerID, volume)
@@ -39,7 +40,7 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume str
 	// 否则直接退出
 	if tty {
 		_ = parent.Wait()
-		container.DelWorkSpace("/root/myoverlayfs", volume)
+		container.DelWorkSpace(containerID, volume)
 		err := container.DelContainerInfo(containerID)
 		if err != nil {
 			logrus.Error(err)
