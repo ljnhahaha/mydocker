@@ -2,27 +2,25 @@ package main
 
 import (
 	"os"
+	"strconv"
 	"strings"
 
 	"mydocker/cgroups"
 	"mydocker/cgroups/subsystems"
 	"mydocker/container"
+	"mydocker/network"
 
 	"github.com/sirupsen/logrus"
 )
 
-func Run(tty bool, cmdArray, envSlice []string, res *subsystems.ResourceConfig, volume, containerName, imageName string) {
+func Run(tty bool, cmdArray, envSlice []string, res *subsystems.ResourceConfig, volume, containerName string,
+	imageName, net string, portMapping []string) {
+
 	containerID := container.GenerateContainerID()
 
 	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID, imageName, envSlice)
 	if err := parent.Start(); err != nil {
 		logrus.Error(err.Error())
-		return
-	}
-
-	err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, containerName, containerID, volume)
-	if err != nil {
-		logrus.Errorf("record container info failed, err: %v", err)
 		return
 	}
 
@@ -33,6 +31,34 @@ func Run(tty bool, cmdArray, envSlice []string, res *subsystems.ResourceConfig, 
 	_ = cgroupManager.Set(res)
 	_ = cgroupManager.Apply(parent.Process.Pid, res)
 
+	var containerIP string
+	// 配置网络
+	if net != "" {
+		containerINFO := &container.Info{
+			Id:          containerID,
+			Name:        containerName,
+			Pid:         strconv.Itoa(parent.Process.Pid),
+			PortMapping: portMapping,
+		}
+		ip, err := network.Connect(net, containerINFO)
+		if err != nil {
+			logrus.Errorf("connect to net %s failed, %v", net, err)
+			container.DelWorkSpace(containerID, volume)
+			err := container.DelContainerInfo(containerID)
+			if err != nil {
+				logrus.Error(err)
+			}
+			return
+		}
+		containerIP = ip.String()
+	}
+
+	info, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, containerName, containerID, volume, net, containerIP, portMapping)
+	if err != nil {
+		logrus.Errorf("record container info failed, err: %v", err)
+		return
+	}
+
 	// 父进程没有向Pipe输入数据时，子进程会阻塞
 	sendInitCmds(cmdArray, wPipe)
 
@@ -41,9 +67,13 @@ func Run(tty bool, cmdArray, envSlice []string, res *subsystems.ResourceConfig, 
 	if tty {
 		_ = parent.Wait()
 		container.DelWorkSpace(containerID, volume)
-		err := container.DelContainerInfo(containerID)
-		if err != nil {
+		if err := container.DelContainerInfo(containerID); err != nil {
 			logrus.Error(err)
+		}
+		if net != "" {
+			if err = network.Disconnect(info); err != nil {
+				logrus.Errorf("%+v", err)
+			}
 		}
 	}
 

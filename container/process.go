@@ -27,13 +27,16 @@ const (
 )
 
 type Info struct {
-	Pid         string `json:"pid"`         // 容器的init进程在宿主机上的PID
-	Id          string `json:"id"`          // 容器的ID
-	Name        string `json:"name"`        // 容器名
-	Command     string `json:"command"`     // 容器的启动命令
-	CreatedTime string `json:"createdtime"` // 容器的创建时间
-	Status      string `json:"status"`      // 容器状态
-	Volume      string `json:"volume"`      // 容器挂载的volume
+	Pid         string   `json:"pid"`         // 容器的init进程在宿主机上的PID
+	Id          string   `json:"id"`          // 容器的ID
+	Name        string   `json:"name"`        // 容器名
+	Command     string   `json:"command"`     // 容器的启动命令
+	CreatedTime string   `json:"createdtime"` // 容器的创建时间
+	Status      string   `json:"status"`      // 容器状态
+	Volume      string   `json:"volume"`      // 容器挂载的volume
+	NetworkName string   `json:"network"`     // 容器所在网络名
+	IP          string   `json:"ip"`          // 容器IP
+	PortMapping []string `json:"portmapping"` // 容器端口映射
 }
 
 // Instantiate a child process initialization command

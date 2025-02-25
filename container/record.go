@@ -26,7 +26,8 @@ func randStringBytes(n int) string {
 	return string(b)
 }
 
-func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume string) error {
+func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume, net, ip string,
+	portMapping []string) (*Info, error) {
 	if containerName == "" {
 		containerName = containerID
 	}
@@ -40,11 +41,14 @@ func RecordContainerInfo(containerPID int, commandArray []string, containerName,
 		CreatedTime: time.Now().Format("2006-01-02 15:04:05"),
 		Status:      RUNNING,
 		Volume:      volume,
+		NetworkName: net,
+		IP:          ip,
+		PortMapping: portMapping,
 	}
 
 	jsonBytes, err := json.Marshal(containerInfo)
 	if err != nil {
-		return errors.WithMessage(err, "container info marshal failed")
+		return containerInfo, errors.WithMessage(err, "container info marshal failed")
 	}
 	jsonStr := string(jsonBytes)
 
@@ -53,22 +57,22 @@ func RecordContainerInfo(containerPID int, commandArray []string, containerName,
 	exists, _ := utils.PathExist(dirPath)
 	if !exists {
 		if err = os.MkdirAll(dirPath, 0622); err != nil {
-			return errors.WithMessagef(err, "mkdir %s failed", dirPath)
+			return containerInfo, errors.WithMessagef(err, "mkdir %s failed", dirPath)
 		}
 	}
 
 	fileName := filepath.Join(dirPath, ConfigName)
 	file, err := os.Create(fileName)
 	if err != nil {
-		return errors.WithMessagef(err, "create file %s failed", fileName)
+		return containerInfo, errors.WithMessagef(err, "create file %s failed", fileName)
 	}
 	defer file.Close()
 
 	if _, err = file.WriteString(jsonStr); err != nil {
-		return errors.WithMessagef(err, "write container info to file %s failed", fileName)
+		return containerInfo, errors.WithMessagef(err, "write container info to file %s failed", fileName)
 	}
 
-	return nil
+	return containerInfo, nil
 }
 
 func GenerateContainerID() string {
