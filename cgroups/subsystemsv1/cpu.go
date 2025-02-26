@@ -1,4 +1,4 @@
-package subsystems
+package subsystemsv1
 
 import (
 	"os"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"mydocker/cgroups/resource"
 	"mydocker/utils"
 )
 
@@ -19,20 +20,14 @@ func (cs *CpuSubsystem) Name() string {
 	return "cpu"
 }
 
-func (cs *CpuSubsystem) Set(cgroup string, rcfg *ResourceConfig) error {
-	if rcfg.CpuCfsQuota == 0 && rcfg.CpuShare == "" {
+func (cs *CpuSubsystem) Set(cgroup string, rcfg *resource.ResourceConfig) error {
+	if rcfg.CpuCfsQuota == 0 {
 		return nil
 	}
 
 	cgroupPath, err := getCgroupPath(cs, cgroup, true)
 	if err != nil {
 		return err
-	}
-
-	if rcfg.CpuShare != "" {
-		if err := os.WriteFile(path.Join(cgroupPath, "cpu.shares"), []byte(rcfg.CpuShare), 0644); err != nil {
-			return errors.Wrap(err, "set cpushare fail")
-		}
 	}
 
 	if rcfg.CpuCfsQuota != 0 {
@@ -49,8 +44,8 @@ func (cs *CpuSubsystem) Set(cgroup string, rcfg *ResourceConfig) error {
 	return nil
 }
 
-func (cs *CpuSubsystem) Apply(cgroup string, pid int, rcfg *ResourceConfig) error {
-	if rcfg.CpuCfsQuota == 0 && rcfg.CpuShare == "" {
+func (cs *CpuSubsystem) Apply(cgroup string, pid int, rcfg *resource.ResourceConfig) error {
+	if rcfg.CpuCfsQuota == 0 {
 		return nil
 	}
 

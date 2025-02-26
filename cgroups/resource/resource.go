@@ -1,4 +1,4 @@
-package subsystems
+package resource
 
 // Resource control subsystems
 type Subsystem interface {
@@ -18,12 +18,5 @@ type Subsystem interface {
 type ResourceConfig struct {
 	MemoryLimit string
 	CpuCfsQuota int
-	CpuShare    string
 	CpuSet      string
-}
-
-var SubsystemSet = []Subsystem{
-	&CpuSubsystem{},
-	&CpusetSubsystem{},
-	&MemorySubsystem{},
 }

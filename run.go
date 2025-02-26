@@ -6,14 +6,14 @@ import (
 	"strings"
 
 	"mydocker/cgroups"
-	"mydocker/cgroups/subsystems"
+	"mydocker/cgroups/resource"
 	"mydocker/container"
 	"mydocker/network"
 
 	"github.com/sirupsen/logrus"
 )
 
-func Run(tty bool, cmdArray, envSlice []string, res *subsystems.ResourceConfig, volume, containerName string,
+func Run(tty bool, cmdArray, envSlice []string, res *resource.ResourceConfig, volume, containerName string,
 	imageName, net string, portMapping []string) {
 
 	containerID := container.GenerateContainerID()

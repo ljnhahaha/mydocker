@@ -1,8 +1,9 @@
-package subsystems
+package subsystemsv1
 
 import (
 	"bufio"
 	"fmt"
+	"mydocker/cgroups/resource"
 	"os"
 	"path"
 	"strings"
@@ -12,7 +13,7 @@ import (
 )
 
 // Get the absolute path of a Cgroup
-func getCgroupPath(subsystem Subsystem, cgroup string, autoCreate bool) (string, error) {
+func getCgroupPath(subsystem resource.Subsystem, cgroup string, autoCreate bool) (string, error) {
 	mountPath, err := findSubsystemMountPath(subsystem.Name())
 	if err != nil {
 		logrus.Error(err)

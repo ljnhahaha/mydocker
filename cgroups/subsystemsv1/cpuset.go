@@ -1,10 +1,11 @@
-package subsystems
+package subsystemsv1
 
 import (
 	"os"
 	"path"
 	"strconv"
 
+	"mydocker/cgroups/resource"
 	"mydocker/utils"
 
 	"github.com/pkg/errors"
@@ -17,7 +18,7 @@ func (css *CpusetSubsystem) Name() string {
 	return "cpuset"
 }
 
-func (css *CpusetSubsystem) Set(cgroup string, rcfg *ResourceConfig) error {
+func (css *CpusetSubsystem) Set(cgroup string, rcfg *resource.ResourceConfig) error {
 	if rcfg.CpuSet == "" {
 		return nil
 	}
@@ -34,7 +35,7 @@ func (css *CpusetSubsystem) Set(cgroup string, rcfg *ResourceConfig) error {
 	return nil
 }
 
-func (css *CpusetSubsystem) Apply(cgroup string, pid int, rcfg *ResourceConfig) error {
+func (css *CpusetSubsystem) Apply(cgroup string, pid int, rcfg *resource.ResourceConfig) error {
 	if rcfg.CpuSet == "" {
 		return nil
 	}

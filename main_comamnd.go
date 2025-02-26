@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
-	"mydocker/cgroups/subsystems"
+	"mydocker/cgroups/resource"
 	"mydocker/container"
 	"mydocker/network"
 )
@@ -72,7 +72,7 @@ var runCommand = cli.Command{
 			return fmt.Errorf("it and d parameter can not be both provided")
 		}
 
-		resCfg := &subsystems.ResourceConfig{
+		resCfg := &resource.ResourceConfig{
 			MemoryLimit: c.String("mem"),
 			CpuSet:      c.String("cpuset"),
 			CpuCfsQuota: c.Int("cpu"),
