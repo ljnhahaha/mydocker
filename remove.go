@@ -45,12 +45,11 @@ func removeContainer(containerID string, force bool) {
 
 		if err = syscall.Kill(pidInt, syscall.SIGTERM); err != nil {
 			log.Errorf("kill process %d failed, %v", pidInt, err)
-			return
 		}
+
 		dirPath := filepath.Join(container.InfoLoc, containerID)
 		if err = os.RemoveAll(dirPath); err != nil {
 			log.Errorf("remove dir %s failed, %v", dirPath, err)
-			return
 		}
 		container.DelWorkSpace(containerID, containerInfo.Volume)
 		if containerInfo.NetworkName != "" {

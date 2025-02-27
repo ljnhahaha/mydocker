@@ -33,6 +33,7 @@ type Info struct {
 	Name        string   `json:"name"`        // 容器名
 	Command     string   `json:"command"`     // 容器的启动命令
 	CreatedTime string   `json:"createdtime"` // 容器的创建时间
+	Image       string   `json:"image"`       // 容器镜像
 	Status      string   `json:"status"`      // 容器状态
 	Volume      string   `json:"volume"`      // 容器挂载的volume
 	NetworkName string   `json:"network"`     // 容器所在网络名

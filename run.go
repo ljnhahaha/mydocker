@@ -58,7 +58,7 @@ func Run(tty bool, cmdArray, envSlice []string, res *resource.ResourceConfig, vo
 		containerIP = ip.String()
 	}
 
-	info, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, containerName, containerID, volume, net, containerIP, portMapping)
+	info, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, containerName, containerID, volume, net, containerIP, imageName, portMapping)
 	if err != nil {
 		logrus.Errorf("record container info failed, err: %v", err)
 		return

@@ -26,7 +26,7 @@ func randStringBytes(n int) string {
 	return string(b)
 }
 
-func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume, net, ip string,
+func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume, net, ip, image string,
 	portMapping []string) (*Info, error) {
 	if containerName == "" {
 		containerName = containerID
@@ -44,6 +44,7 @@ func RecordContainerInfo(containerPID int, commandArray []string, containerName,
 		NetworkName: net,
 		IP:          ip,
 		PortMapping: portMapping,
+		Image:       image,
 	}
 
 	jsonBytes, err := json.Marshal(containerInfo)

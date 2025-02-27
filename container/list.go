@@ -29,15 +29,16 @@ func ListContainers() {
 
 	// 使用tabwriter进行格式化输出
 	w := tabwriter.NewWriter(os.Stdout, 12, 1, 3, ' ', 0)
-	_, err = fmt.Fprint(w, "ID\tNAME\tPID\tIP\tSTATUS\tCOMMAND\tCREATED\n")
+	_, err = fmt.Fprint(w, "ID\tNAME\tIMAGE\tPID\tIP\tSTATUS\tCOMMAND\tCREATED\n")
 	if err != nil {
 		logrus.Errorf("Fprint err: %v", err)
 	}
 
 	for _, info := range infoList {
-		_, err = fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+		_, err = fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 			info.Id,
 			info.Name,
+			info.Image,
 			info.Pid,
 			info.IP,
 			info.Status,
