@@ -39,7 +39,7 @@ func ExecContainer(containerID string, cmdArr []string) {
 	_ = os.Setenv(EnvExecCmd, cmdStr)
 
 	// 将指定容器内的环境变量传递给新进程
-	containerEnvs, err := getEnvByContainerID(containerID)
+	containerEnvs, err := getEnvByPID(pid)
 	if err != nil {
 		log.Errorf("get env failed, %v", err)
 	} else {
@@ -66,8 +66,8 @@ func getPidByContainerID(containerID string) (string, error) {
 	return containerInfo.Pid, nil
 }
 
-func getEnvByContainerID(containerID string) ([]string, error) {
-	path := fmt.Sprintf("/proc/%s/environ", containerID)
+func getEnvByPID(pid string) ([]string, error) {
+	path := fmt.Sprintf("/proc/%s/environ", pid)
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err

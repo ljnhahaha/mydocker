@@ -18,9 +18,14 @@ func Run(tty bool, cmdArray, envSlice []string, res *resource.ResourceConfig, vo
 
 	containerID := container.GenerateContainerID()
 
-	parent, wPipe := container.NewParentProcessPipe(tty, volume, containerID, imageName, envSlice)
+	parent, wPipe, err := container.NewParentProcessPipe(tty, volume, containerID, imageName, envSlice)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
 	if err := parent.Start(); err != nil {
-		logrus.Error(err.Error())
+		logrus.Error(err)
 		return
 	}
 

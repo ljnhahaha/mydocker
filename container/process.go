@@ -13,6 +13,7 @@ import (
 
 	"mydocker/utils"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -62,11 +63,11 @@ type Info struct {
 // }
 
 // 创建子进程启动命令，通过Pipe，父进程向子进程传递参数
-func NewParentProcessPipe(tty bool, volume, containerID, imageName string, envSlice []string) (*exec.Cmd, *os.File) {
+func NewParentProcessPipe(tty bool, volume, containerID, imageName string, envSlice []string) (*exec.Cmd, *os.File, error) {
 	rPipe, wPipe, err := os.Pipe()
 
 	if err != nil {
-		logrus.Error(err.Error())
+		logrus.Error(err)
 	}
 
 	// /proc/self/exe 表示当前正在运行的可执行文件的路径（符号链接到当前进程的可执行文件)
@@ -88,16 +89,14 @@ func NewParentProcessPipe(tty bool, volume, containerID, imageName string, envSl
 		exists, _ := utils.PathExist(dirPath)
 		if !exists {
 			if err := os.MkdirAll(dirPath, 0622); err != nil {
-				logrus.Errorf("mkdir %s failed", dirPath)
-				return nil, nil
+				return nil, nil, errors.Wrapf(err, "mkdir %s failed", dirPath)
 			}
 		}
 
 		stdLogFilePath := filepath.Join(dirPath, GetLogFile(containerID))
 		stdLogFile, err := os.Create(stdLogFilePath)
 		if err != nil {
-			logrus.Errorf("create log file %s failed", stdLogFilePath)
-			return nil, nil
+			return nil, nil, errors.Wrapf(err, "create log file %s failed", stdLogFilePath)
 		}
 
 		cmd.Stdout = stdLogFile
@@ -108,11 +107,14 @@ func NewParentProcessPipe(tty bool, volume, containerID, imageName string, envSl
 	cmd.ExtraFiles = []*os.File{rPipe}
 
 	// File Systems
-	NewWorkSpace(containerID, imageName, volume)
+	err = NewWorkSpace(containerID, imageName, volume)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "create work space failed")
+	}
 	// Specify work dir
 	cmd.Dir = utils.GetMerged(containerID)
 
 	cmd.Env = append(os.Environ(), envSlice...)
 
-	return cmd, wPipe
+	return cmd, wPipe, nil
 }

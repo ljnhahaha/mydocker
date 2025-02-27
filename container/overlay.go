@@ -5,19 +5,22 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 // 创建挂载OverlayFS所需的文件并挂载OverlayFS
 // 如果指定了volume还需要挂载volume
-func NewWorkSpace(containerID, imageName, volume string) {
+func NewWorkSpace(containerID, imageName, volume string) error {
 	rootPath := utils.GetRoot(containerID)
 	if err := os.Mkdir(rootPath, 0777); err != nil {
-		logrus.Errorf("mkdir %s failed, %v", rootPath, err)
-		return
+		return errors.Wrapf(err, "mkdir %s failed", rootPath)
 	}
 
-	createLower(containerID, imageName)
+	err := createLower(containerID, imageName)
+	if err != nil {
+		return errors.Wrap(err, "create lower fs failed")
+	}
 	createDirs(containerID)
 	mountOverlayFS(containerID)
 
@@ -25,17 +28,21 @@ func NewWorkSpace(containerID, imageName, volume string) {
 		mntPath := utils.GetMerged(containerID)
 		hostPath, containerPath, err := volumeParse(volume)
 		if err != nil {
-			logrus.Errorf("parse volume path fail, err: %v", err)
-			return
+			return errors.Wrap(err, "parse volume path failed")
 		}
 		mountVolume(mntPath, hostPath, containerPath)
 	}
+	return nil
 }
 
 // 将指定镜像挂载为 overlayfs 的 lower filesystem
-func createLower(containerID, imageName string) {
+func createLower(containerID, imageName string) error {
 	lowerPath := utils.GetLower(containerID)
 	imageTarPath := utils.GetImage(imageName)
+
+	if exist, err := utils.PathExist(imageTarPath); !exist {
+		return errors.Wrapf(err, "image [%s] does not exist", imageName)
+	}
 
 	exist, err := utils.PathExist(lowerPath)
 	if err != nil {
@@ -45,30 +52,31 @@ func createLower(containerID, imageName string) {
 	// 如果不存在busybox路径，则将busybox.tar解压到对应路径
 	if !exist {
 		if err = os.Mkdir(lowerPath, 0777); err != nil {
-			logrus.Errorf("overlay lower mkdir fail, %v", err)
+			return errors.Wrap(err, "overlay lower mkdir failed")
 		}
 
 		if _, err = exec.Command("tar", "-xvf", imageTarPath, "-C", lowerPath).CombinedOutput(); err != nil {
-			logrus.Errorf("untar %s fail, %v", imageTarPath, err)
+			return errors.Wrapf(err, "untar %s failed", imageTarPath)
 		}
 	}
+	return nil
 }
 
 // 创建挂载 overlayfs 中 upper filesystem & work filesystem & mergerd filesystem的文件夹
 func createDirs(containerID string) {
 	upperPath := utils.GetUpper(containerID)
 	if err := os.Mkdir(upperPath, 0777); err != nil {
-		logrus.Errorf("overlay upper mkdir fail, %v", err)
+		logrus.Errorf("overlay upper mkdir failed, %v", err)
 	}
 
 	workPath := utils.GetWork(containerID)
 	if err := os.Mkdir(workPath, 0777); err != nil {
-		logrus.Errorf("overlay work mkdir fail, %v", err)
+		logrus.Errorf("overlay work mkdir failed, %v", err)
 	}
 
 	mergedPath := utils.GetMerged(containerID)
 	if err := os.Mkdir(mergedPath, 0777); err != nil {
-		logrus.Errorf("overlay merged mkdir fail, %v", err)
+		logrus.Errorf("overlay merged mkdir failed, %v", err)
 	}
 }
 
@@ -94,7 +102,7 @@ func DelWorkSpace(containerID, volume string) {
 		mntPath := utils.GetMerged(containerID)
 		_, containerPath, err := volumeParse(volume)
 		if err != nil {
-			logrus.Errorf("parse volume path fail, err: %v", err)
+			logrus.Errorf("parse volume path failed, err: %v", err)
 			return
 		}
 		umountVolume(mntPath, containerPath)
@@ -115,20 +123,6 @@ func umountOverlayFS(containerID string) {
 }
 
 func delDirs(containerID string) {
-	// upperPath := utils.GetUpper(containerID)
-	// if err := os.RemoveAll(upperPath); err != nil {
-	// 	logrus.Errorf("overlay upper remove fail, %v", err)
-	// }
-
-	// workPath := utils.GetWork(containerID)
-	// if err := os.RemoveAll(workPath); err != nil {
-	// 	logrus.Errorf("overlay work remove fail, %v", err)
-	// }
-
-	// mergedPath := utils.GetMerged(containerID)
-	// if err := os.RemoveAll(mergedPath); err != nil {
-	// 	logrus.Errorf("overlay merged remove fail, %v", err)
-	// }
 	rootPath := utils.GetRoot(containerID)
 	if err := os.RemoveAll(rootPath); err != nil {
 		logrus.Errorf("remove path %s failed, %v", rootPath, err)

@@ -61,8 +61,8 @@ var runCommand = cli.Command{
 	},
 	Action: func(c *cli.Context) error {
 		// c.Args() 不包括flag相关参数
-		if c.Args().Len() < 1 {
-			return errors.New("missing container command")
+		if c.Args().Len() < 2 {
+			return errors.New("missing container command or image")
 		}
 
 		tty := c.Bool("it")
