@@ -24,6 +24,7 @@ func ExecContainer(containerID string, cmdArr []string) {
 	pid, err := getPidByContainerID(containerID)
 	if err != nil {
 		log.Error(err)
+		return
 	}
 
 	cmd := exec.Command("/proc/self/exe", "exec")

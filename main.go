@@ -30,6 +30,7 @@ func main() {
 		&stopCommand,
 		&removeCommand,
 		&networkCommand,
+		&startCommand,
 	}
 
 	app.Before = func(c *cli.Context) error {

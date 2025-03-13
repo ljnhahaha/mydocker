@@ -106,3 +106,25 @@ func pivotRoot(root string) error {
 
 	return os.Remove(pivotDir)
 }
+
+func StartContainerInitProcess() error {
+	setUpMount()
+
+	startCmd := "top"
+	// 根据命令查找环境变量，找到可执行文件
+	path, err := exec.LookPath(startCmd)
+	if err != nil {
+		log.Error(err)
+	}
+
+	// 利用syscall.Exec()方法调用execve系统调用，覆盖当前进程，使容器中运行的
+	// command 成为PID 1 (实际上运行的第一个command是 mydocker init ...)
+	// 第一个参数为可执行二进制文件路径， 如 "/bin/ls"
+	// 第二个参数为具体命令 []string, 如 ["ls", "./"]
+	// 第三个参数为环境变量
+	if err := syscall.Exec(path, []string{startCmd}, os.Environ()); err != nil {
+		log.Errorf("RunContainerInitProcess exec: %s", err.Error())
+	}
+
+	return nil
+}

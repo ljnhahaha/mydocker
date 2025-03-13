@@ -254,3 +254,22 @@ var networkCommand = cli.Command{
 		},
 	},
 }
+
+var startCommand = cli.Command{
+	Name:  "start",
+	Usage: "start a stopped container and run it in background",
+	Action: func(c *cli.Context) error {
+		if os.Getenv(EnvStart) != "" {
+			container.StartContainerInitProcess()
+		}
+
+		if len(c.Args().Slice()) < 1 {
+			return errors.New("start command missing container id")
+		}
+
+		containerID := c.Args().First()
+		startContainer(containerID)
+
+		return nil
+	},
+}
