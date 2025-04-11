@@ -68,6 +68,7 @@ func setUpMount() {
 	}
 
 	// mount时禁止以下行为
+	// 重新挂载 procfs
 	defaltMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
 	_ = syscall.Mount("proc", "/proc", "proc", uintptr(defaltMountFlags), "")
 
@@ -79,11 +80,12 @@ func setUpMount() {
 
 // 为当前容器挂载新的rootfs
 func pivotRoot(root string) error {
+	// pivot_root 要求 new_root 是一个挂载点
 	if err := syscall.Mount(root, root, "bind", syscall.MS_BIND|syscall.MS_REC, ""); err != nil {
 		return errors.Wrap(err, "mount rootfs to itself")
 	}
 
-	// 为旧rootfs创建一个临时挂载点
+	// 为旧rootfs创建一个临时挂载点 put_old
 	pivotDir := filepath.Join(root, ".pivot_root")
 	if err := os.Mkdir(pivotDir, 0777); err != nil {
 		return err
